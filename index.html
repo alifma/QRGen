@@ -1,24 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-    <meta charset="UTF-8">
-    <title>QR Code Generator</title>
-</head>
-<body>
-    <input type="text" id="text-input" placeholder="Enter text or URL">
-    <button onclick="generateQRCode()">Generate QR Code</button>
-    <div id="qrcode"></div>
-    
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function generateQRCode() {
-            var text = document.getElementById("text-input").value;
-            var qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: text,
-                width: 128,
-                height: 128
-            });
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              clifford: "#da373d",
+            },
+          },
+        },
+      };
     </script>
-</body>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+      }
+    </style>
+
+    <meta charset="UTF-8" />
+    <title>QR Code Generator</title>
+  </head>
+
+  <body>
+    <div
+      class="flex justify-center min-h-screen items-center text-xl bg-[#F4F5F7]">
+      <div class="gap-y-2 text-center">
+        <label
+          for="text"
+          class="font-bold text-2xl text-[#172b4d]"
+          >Generate QRCode from Text</label
+        >
+        <input
+          class="block mt-4 w-full p-2 border border-gray-400 rounded bg-slate-300"
+          type="text"
+          id="text-input"
+          placeholder="Enter text or URL" />
+        <div class="mt-2">
+          <p class="mb-2 font-medium text-[#6B778C]">
+            Size
+          </p>
+          <label
+            for="size-input"
+            class="flex gap-x-2 items-center"
+            ><input
+              type="radio"
+              name="size"
+              id="size-128"
+              value="128"
+              checked />128
+
+            <input
+              type="radio"
+              name="size"
+              id="size-256"
+              value="256" />256
+
+            <input
+              type="radio"
+              name="size"
+              id="custom"
+              value="custom" />Custom
+            <input
+              type="number"
+              name=""
+              id="customSizeInput"
+              class="border border-gray-400 rounded bg-slate-300 w-1/2"
+          /></label>
+        </div>
+        <div
+          id="qrcode"
+          class="flex justify-center items-center mt-3 mr-2"></div>
+        <button
+          onclick="generateQRCode() "
+          class="mt-4 px-4 py-2 w-full bg-blue-500 text-white rounded">
+          Generate QR Code
+        </button>
+        <a
+          href=""
+          id="downloadBtn"
+          style="display: none"
+          class="mt-4 px-4 py-2 w-full bg-green-500 text-white rounded">
+          <button>Download</button>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      function generateQRCode() {
+        var text =document.getElementById("text-input").value;
+
+        if (text == "") {
+          alert("Please enter text or URL");
+        } else {
+          var size = document.querySelector('input[name="size"]:checked').value;
+
+          if (size == "custom") {
+            size = document.getElementById("customSizeInput").value;
+            size === "" ? alert("Please enter size") : size;
+          }
+
+          var size = parseInt(size);
+
+          var Getqrcode = document.getElementById("qrcode");
+          Getqrcode.innerHTML = "";
+
+          if (size > 2000) {
+            alert("Please select size less than 2000");
+          } 
+          else {
+            var qrcode = new QRCode(document.getElementById("qrcode"),
+              {
+                text: text,
+                width: size,
+                height: size,
+              }
+            );
+
+            var downloadButton =
+              document.getElementById("downloadBtn");
+            downloadButton.style.display = "block";
+            downloadButton.download = `qrcode @${size}.jpg`;
+            downloadButton.href = document.querySelector("canvas").toDataURL();
+          }
+        }
+      }
+    </script>
+  </body>
 </html>
